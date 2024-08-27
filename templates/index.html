@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Verificação de Mensagem</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+  <h1>Verificação de Mensagem</h1>
+  <form id="messageForm">
+    <label for="message">Mensagem:</label><br>
+    <textarea id="message" name="message" rows="4" cols="50"></textarea><br><br>
+    <input type="radio" id="content" name="check" value="content" checked>
+    <label for="content">Verificar conteúdo da mensagem</label><br>
+    <input type="radio" id="links" name="check" value="links">
+    <label for="links">Verificar links na mensagem</label><br><br>
+    <button type="submit">Verificar</button>
+  </form>
+
+  <h1>Verificação de Telefone</h1>
+  <form id="phoneForm">
+    <label for="phone">Número de telefone:</label><br>
+    <input type="text" id="phone" name="phone"><br><br>
+    <button type="submit">Verificar Telefone</button>
+  </form>
+
+  <div id="result"></div>
+
+  <script src="{{ url_for('static', filename='scripts.js') }}"></script>
+</body>
+</html>

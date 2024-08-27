@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  mysql_db:
+    build:
+      context: ./
+      dockerfile: mysql/Dockerfile
+    container_name: mysql_db
+    restart: always
+    volumes:
+      - mysql_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+
+  web:
+    build:
+      context: ./
+      dockerfile: src/Dockerfile
+    container_name: flask_web
+    restart: always
+    environment:
+      - DB_HOST=mysql_db
+      - DB_USER=root
+      - DB_PASSWORD=1234
+      - DB_NAME=empresa_dados
+    ports:
+      - "5000:5000"
+    depends_on:
+      - mysql_db
+
+volumes:
+  mysql_data:
