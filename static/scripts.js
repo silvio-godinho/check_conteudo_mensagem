@@ -11,6 +11,12 @@ document.getElementById("messageForm").addEventListener("submit", function(event
     verificarTelefone(phone);
   });
 
+  document.getElementById("dnsForm").addEventListener("submit", function(event) {
+    event.preventDefault();
+    var dns = document.getElementById("dns").value;
+    verificarDNS(dns);
+  });
+
   function verificarMensagem(message, check) {
     fetch("/", {
       method: "POST",
@@ -44,3 +50,21 @@ document.getElementById("messageForm").addEventListener("submit", function(event
       console.error("Erro:", error);
     });
   }
+
+  function verificarDNS(dns) {
+    fetch("/verificar_dns", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ "dns": dns })
+    })
+    .then(response => response.json())
+    .then(result => {
+      document.getElementById("result").innerHTML = result.status;
+    })
+    .catch(error => {
+      console.error("Erro:", error);
+    });
+  }
+

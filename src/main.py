@@ -58,8 +58,8 @@ def verificar_telefone():
             return jsonify({"error": "Número de telefone não fornecido"}), 400
 
         conn = mysql.connector.connect(
-            user=os.getenv('DB_USER', 'root'),
-            password=os.getenv('DB_PASSWORD', 'root_password'),
+            user=os.getenv('DB_USER', ''),
+            password=os.getenv('DB_PASSWORD', ''),
             host=os.getenv('DB_HOST', 'mysql_db'),
             database=os.getenv('DB_NAME', 'empresa_dados')
         )
@@ -72,12 +72,46 @@ def verificar_telefone():
         if resultado:
             return jsonify({"status": "Número autêntico!!"}), 200
         else:
-            return jsonify({"status": "Número não encontrado, possivél golpe CUIDADO!!!"}), 404
+            return jsonify({"status": "Número não encontrado, possível golpe CUIDADO!!!"}), 404
 
     except Exception as e:
         app.logger.error(f"Erro ao conectar ao banco de dados: {str(e)}")
         return jsonify({"error": str(e)}), 500
 
+@app.route("/verificar_dns", methods=["POST"])
+def verificar_dns():
+    try:
+        data = request.get_json()
+        dns_input = data.get("dns", "")
 
+        print(f"Received DNS: {dns_input}")  # Debug: exibe o DNS recebido
+
+        # Não há mais validação com regex
+        dns_clean = dns_input.strip()  # Remove espaços em branco ao redor, se houver
+
+        print(f"Clean DNS: {dns_clean}")  # Debug: exibe o DNS limpo
+
+        # Verificar se o DNS pertence à empresa
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+
+        # Debug: Exiba a consulta SQL e o parâmetro
+        print(f"Executing query: SELECT * FROM endereco_dns WHERE endereco_dns = %s")
+        print(f"With parameter: {dns_clean}")
+
+        cursor.execute("SELECT * FROM endereco_dns WHERE endereco_dns = %s", (dns_clean,))
+        result = cursor.fetchone()
+        cursor.close()
+        conn.close()
+
+        # Debug: Exiba o resultado da consulta
+        print(f"Query result: {result}")
+
+        if result:
+            return jsonify({"status": "Site oficial da empresa"})
+        else:
+            return jsonify({"status": "Site não é o oficial da empresa, CUIDADO possível golpe !!!!"})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
